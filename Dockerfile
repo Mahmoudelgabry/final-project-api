@@ -15,4 +15,4 @@ COPY --from=build /app/publish .
 
 EXPOSE 8080
 
-ENTRYPOINT ["dotnet", "final_project.API.dll"]I.dll"]
+ENTRYPOINT ["dotnet", "final_project.API.dll"]

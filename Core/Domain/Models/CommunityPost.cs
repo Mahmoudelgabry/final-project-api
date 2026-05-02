@@ -16,7 +16,7 @@ namespace Domain.Models
         public string Content { get; set; }
         public string ImageUrl { get; set; }
 
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; } 
 
         public ICollection<Comment> Comments { get; set; }
         public ICollection<PostVote> Votes { get; set; }

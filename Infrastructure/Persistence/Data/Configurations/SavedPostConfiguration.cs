@@ -11,7 +11,7 @@ namespace Persistence.Data.Configurations
         public void Configure(EntityTypeBuilder<SavedPost> builder)
         {
             builder.Property(s => s.CreatedAt)
-                   .HasDefaultValueSql("GETDATE()");
+                   .HasDefaultValueSql("NOW()");
 
             builder.HasOne(s => s.User)
                    .WithMany()

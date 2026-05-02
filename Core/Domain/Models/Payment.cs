@@ -17,7 +17,7 @@ namespace Domain.Models
 
         public string? TransactionId { get; set; } // 🔥 NEW
 
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; }
     }
 
 }

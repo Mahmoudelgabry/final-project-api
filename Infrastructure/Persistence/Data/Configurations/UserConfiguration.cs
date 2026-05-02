@@ -33,7 +33,7 @@ namespace Persistence.Data.Configurations
                    .HasMaxLength(50);
 
             builder.Property(u => u.CreatedAt)
-                   .HasDefaultValueSql("GETDATE()");
+                   .HasDefaultValueSql("NOW()");
         }
     }
 }

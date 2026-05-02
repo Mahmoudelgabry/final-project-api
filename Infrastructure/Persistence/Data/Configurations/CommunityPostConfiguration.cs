@@ -18,7 +18,7 @@ namespace Persistence.Data.Configurations
                    .HasMaxLength(500);
 
             builder.Property(p => p.CreatedAt)
-                   .HasDefaultValueSql("GETDATE()");
+                   .HasDefaultValueSql("NOW()");
 
             builder.HasOne(p => p.User)
                    .WithMany(u => u.Posts)

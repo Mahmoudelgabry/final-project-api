@@ -23,7 +23,7 @@ namespace Persistence.Data.Configurations
 
 
             builder.Property(r => r.CreatedAt)
-                   .HasDefaultValueSql("GETDATE()");
+                   .HasDefaultValueSql("NOW()");
 
             builder.HasOne(r => r.Category)
                    .WithMany(c => c.Recipes)

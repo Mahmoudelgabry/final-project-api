@@ -37,7 +37,7 @@ namespace Persistence.Configurations
                 .HasMaxLength(100);
 
             builder.Property(o => o.CreatedAt)
-                .HasDefaultValueSql("GETUTCDATE()");
+                .HasDefaultValueSql("NOW()");
 
             // ============================
             // 🔗 Relationships (🔥 FIX)

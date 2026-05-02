@@ -28,7 +28,7 @@ namespace Persistence.Configurations
                 .HasMaxLength(150);
 
             builder.Property(p => p.CreatedAt)
-                .HasDefaultValueSql("GETUTCDATE()");
+                .HasDefaultValueSql("NOW()");
 
             // ============================
             // 💳 Duplicate Payment Protection

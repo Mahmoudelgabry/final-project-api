@@ -11,8 +11,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(StoreContext))]
-    [Migration("20260502191508_Adddatabase")]
-    partial class Adddatabase
+    [Migration("20260502224544_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -106,7 +106,7 @@ namespace Persistence.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("GETDATE()");
+                        .HasDefaultValueSql("NOW()");
 
                     b.Property<int>("PostId")
                         .HasColumnType("integer");
@@ -138,7 +138,7 @@ namespace Persistence.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("GETDATE()");
+                        .HasDefaultValueSql("NOW()");
 
                     b.Property<string>("ImageUrl")
                         .IsRequired()
@@ -332,7 +332,7 @@ namespace Persistence.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasDefaultValueSql("NOW()");
 
                     b.Property<int>("OrderStatus")
                         .HasColumnType("integer");
@@ -414,7 +414,7 @@ namespace Persistence.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasDefaultValueSql("NOW()");
 
                     b.Property<int>("OrderId")
                         .HasColumnType("integer");
@@ -547,7 +547,7 @@ namespace Persistence.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("GETDATE()");
+                        .HasDefaultValueSql("NOW()");
 
                     b.Property<string>("DifficultyLevel")
                         .IsRequired()
@@ -626,7 +626,7 @@ namespace Persistence.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("GETDATE()");
+                        .HasDefaultValueSql("NOW()");
 
                     b.Property<int>("PostId")
                         .HasColumnType("integer");
@@ -697,7 +697,7 @@ namespace Persistence.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("GETDATE()");
+                        .HasDefaultValueSql("NOW()");
 
                     b.Property<string>("Email")
                         .IsRequired()

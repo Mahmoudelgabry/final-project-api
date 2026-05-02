@@ -22,7 +22,7 @@ namespace Domain.Models
 
         public string? RequestId { get; set; }
 
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; }
 
         // 🔥 FIX: rename from Items → OrderItems
         public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();

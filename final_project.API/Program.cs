@@ -96,8 +96,12 @@ namespace final_project.API
 
             app.UseMiddleware<ExceptionMiddleware>();
 
-            
-            
+            using (var scope = app.Services.CreateScope())
+            {
+                var db = scope.ServiceProvider.GetRequiredService<StoreContext>();
+                db.Database.Migrate();
+            }
+
             app.UseSwagger();
             app.UseSwaggerUI();
             

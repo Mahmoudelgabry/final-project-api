@@ -35,7 +35,7 @@ namespace Persistence.Configurations
             // ============================
             builder.HasIndex(p => p.TransactionId)
                 .IsUnique()
-                .HasFilter("[TransactionId] IS NOT NULL");
+                .HasFilter("\"TransactionId\" IS NOT NULL");
         }
     }
 

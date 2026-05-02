@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(StoreContext))]
-    [Migration("20260502224544_InitialCreate")]
+    [Migration("20260502230532_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -365,7 +365,7 @@ namespace Persistence.Migrations
 
                     b.HasIndex("RequestId", "UserId")
                         .IsUnique()
-                        .HasFilter("[RequestId] IS NOT NULL");
+                        .HasFilter("\"RequestId\" IS NOT NULL");
 
                     b.ToTable("Orders");
                 });
@@ -439,7 +439,7 @@ namespace Persistence.Migrations
 
                     b.HasIndex("TransactionId")
                         .IsUnique()
-                        .HasFilter("[TransactionId] IS NOT NULL");
+                        .HasFilter("\"TransactionId\" IS NOT NULL");
 
                     b.ToTable("Payments");
                 });

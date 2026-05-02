@@ -626,7 +626,7 @@ namespace Persistence.Migrations
                 table: "Orders",
                 columns: new[] { "RequestId", "UserId" },
                 unique: true,
-                filter: "[RequestId] IS NOT NULL");
+                filter: "\"RequestId\" IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Orders_UserId",
@@ -643,7 +643,7 @@ namespace Persistence.Migrations
                 table: "Payments",
                 column: "TransactionId",
                 unique: true,
-                filter: "[TransactionId] IS NOT NULL");
+                filter: "\"TransactionId\" IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PostTags_PostId",

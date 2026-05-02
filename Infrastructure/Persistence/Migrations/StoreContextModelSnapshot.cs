@@ -362,7 +362,7 @@ namespace Persistence.Migrations
 
                     b.HasIndex("RequestId", "UserId")
                         .IsUnique()
-                        .HasFilter("[RequestId] IS NOT NULL");
+                        .HasFilter("\"RequestId\" IS NOT NULL");
 
                     b.ToTable("Orders");
                 });
@@ -436,7 +436,7 @@ namespace Persistence.Migrations
 
                     b.HasIndex("TransactionId")
                         .IsUnique()
-                        .HasFilter("[TransactionId] IS NOT NULL");
+                        .HasFilter("\"TransactionId\" IS NOT NULL");
 
                     b.ToTable("Payments");
                 });

@@ -52,7 +52,7 @@ namespace Persistence.Configurations
             // ============================
             builder.HasIndex(o => new { o.RequestId, o.UserId })
                 .IsUnique()
-                .HasFilter("[RequestId] IS NOT NULL");
+                .HasFilter("\"RequestId\" IS NOT NULL");
         }
     }
 }

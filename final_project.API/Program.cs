@@ -96,15 +96,15 @@ namespace final_project.API
 
             app.UseMiddleware<ExceptionMiddleware>();
 
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
+            
+            
+            app.UseSwagger();
+            app.UseSwaggerUI();
+            
 
             app.UseHttpsRedirection();
 
-            // ✅ مهم جدًا يكون قبل Authentication
+          
             app.UseCors("AllowFrontend");
 
             app.UseAuthentication();

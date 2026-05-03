@@ -33,7 +33,7 @@ namespace Presentation
         [Authorize]
         
         [HttpPost("logout")]
-        public async Task<IActionResult> Logout([FromBody] RefreshTokenDto dto)
+        public async Task<IActionResult> Logout(LogoutDto dto)
         {
             await serviceManager.AuthService.LogoutAsync(dto.RefreshToken);
 

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Contracts
 {
-    public interface IUserRepository
+    public interface IUserRepository : IGenericRepository<User, int>
     {
         Task<User?> GetByEmailAsync(string email);
     }

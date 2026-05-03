@@ -92,7 +92,7 @@ namespace Services
             if (token == null)
                 throw new NotFoundException("User not found");
 
-
+             
             token.IsRevoked = true;
 
             await _unitOfWork.SaveChangesAsync();
@@ -101,11 +101,12 @@ namespace Services
         // ================= REFRESH TOKEN =================
         public async Task<string> RefreshTokenAsync(string refreshToken)
         {
-            var token = await _unitOfWork
-               .GetRepository<RefreshToken, int>()
-                   .GetAllAsync();
+            var tokens = await _unitOfWork
+              .GetRepository<RefreshToken, int>()
+              .GetAllAsync();
 
-            var existingToken = token.FirstOrDefault(t => t.Token == refreshToken && !t.IsRevoked);
+            var existingToken = tokens
+                .FirstOrDefault(t => t.Token == refreshToken && !t.IsRevoked);
 
             if (existingToken == null)
                 throw new BadRequestException("Invalid refresh token");
@@ -113,7 +114,12 @@ namespace Services
             if (existingToken.ExpiryDate < DateTime.UtcNow)
                 throw new BadRequestException("Refresh token expired");
 
-            var user = existingToken.User;
+            var user = await _unitOfWork.UserRepository
+                .GetAsync(existingToken.UserId);
+
+            if (user == null)
+                throw new NotFoundException("User not found");
+
             return GenerateToken(user);
         }
 

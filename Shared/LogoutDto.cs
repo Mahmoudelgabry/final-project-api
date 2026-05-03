@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace Shared
 {
-    internal class LogoutDto
+    public class LogoutDto
     {
+        public string RefreshToken { get; set; }
     }
 }

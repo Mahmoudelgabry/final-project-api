@@ -61,29 +61,39 @@ namespace Services
 
             var token = GenerateToken(user);
 
-            user.RefreshToken = GenerateRefreshToken();
-            user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
+            var refreshToken = new RefreshToken
+            {
+                Token = GenerateRefreshToken(),
+                ExpiryDate = DateTime.UtcNow.AddDays(7),
+                UserId = user.Id
+            };
 
+            await _unitOfWork.GetRepository<RefreshToken, int>().AddAsync(refreshToken);
             await _unitOfWork.SaveChangesAsync();
 
             return new
             {
                 token,
-                refreshToken = user.RefreshToken
+                refreshToken = refreshToken.Token
             };
+            
         }
 
         // ================= LOGOUT =================
-        public async Task LogoutAsync(int userId)
+        public async Task LogoutAsync(string refreshToken)
         {
-            var user = await _unitOfWork
-                .GetRepository<User, int>()
-                .GetAsync(userId);
+            var tokens = await _unitOfWork
+               .GetRepository<RefreshToken, int>()
+                 .GetAllAsync();
 
-            if (user == null)
+            var token = tokens.FirstOrDefault(t => t.Token == refreshToken);
+
+
+            if (token == null)
                 throw new NotFoundException("User not found");
 
-            user.RefreshToken = null;
+
+            token.IsRevoked = true;
 
             await _unitOfWork.SaveChangesAsync();
         }
@@ -91,18 +101,19 @@ namespace Services
         // ================= REFRESH TOKEN =================
         public async Task<string> RefreshTokenAsync(string refreshToken)
         {
-            var users = await _unitOfWork
-                .GetRepository<User, int>()
-                .GetAllAsync();
+            var token = await _unitOfWork
+               .GetRepository<RefreshToken, int>()
+                   .GetAllAsync();
 
-            var user = users.FirstOrDefault(u => u.RefreshToken == refreshToken);
+            var existingToken = token.FirstOrDefault(t => t.Token == refreshToken && !t.IsRevoked);
 
-            if (user == null)
+            if (existingToken == null)
                 throw new BadRequestException("Invalid refresh token");
 
-            if (user.RefreshTokenExpiryTime < DateTime.UtcNow)
+            if (existingToken.ExpiryDate < DateTime.UtcNow)
                 throw new BadRequestException("Refresh token expired");
 
+            var user = existingToken.User;
             return GenerateToken(user);
         }
 

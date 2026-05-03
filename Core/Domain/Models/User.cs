@@ -20,9 +20,7 @@ namespace Domain.Models
 
         public bool IsActive { get; set; } = true;
 
-        public string? RefreshToken { get; set; }
-
-        public DateTime? RefreshTokenExpiryTime { get; set; }
+       
 
         public ICollection<Order> Orders { get; set; }
         public ICollection<CommunityPost> Posts { get; set; }

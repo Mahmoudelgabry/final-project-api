@@ -14,6 +14,7 @@ namespace Shared
         public string DifficultyLevel { get; set; }
         public int PrepTime { get; set; }
         public bool IsSaved { get; set; }
+        public int Servings { get; set; }
         public string CategoryName { get; set; }
     }
 }

@@ -30,6 +30,7 @@ public class StoreContext : DbContext
     public DbSet<Instruction> Instructions { get; set; }
     public DbSet<SavedRecipe> SavedRecipes { get; set; }
     public DbSet<UserProfile> UserProfiles { get; set; }
+    public DbSet<RefreshToken> RefreshTokens { get; set; }
 
     // 🔥 Payment System
     public DbSet<Payment> Payments { get; set; }

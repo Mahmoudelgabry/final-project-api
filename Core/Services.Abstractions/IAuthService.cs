@@ -11,7 +11,7 @@ namespace Services.Abstractions
     {
         Task RegisterAsync(RegisterDto dto);
         Task<object> LoginAsync(LoginDto dto);
-        Task LogoutAsync(int userId);
+        Task LogoutAsync(string refreshToken);
         Task<string> RefreshTokenAsync(string refreshToken);
         Task ForgotPasswordAsync(string email);          
         Task ResetPasswordAsync(ResetPasswordDto dto);   

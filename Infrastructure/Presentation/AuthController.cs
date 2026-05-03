@@ -31,12 +31,11 @@ namespace Presentation
         }
 
         [Authorize]
+        
         [HttpPost("logout")]
-        public async Task<IActionResult> Logout()
+        public async Task<IActionResult> Logout([FromBody] RefreshTokenDto dto)
         {
-            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-
-            await serviceManager.AuthService.LogoutAsync(userId);
+            await serviceManager.AuthService.LogoutAsync(dto.RefreshToken);
 
             return Ok();
         }

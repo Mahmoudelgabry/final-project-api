@@ -82,11 +82,11 @@ namespace Services
         // ================= LOGOUT =================
         public async Task LogoutAsync(string refreshToken)
         {
-            var tokens = await _unitOfWork
+            var token = (await _unitOfWork
                .GetRepository<RefreshToken, int>()
-                 .GetAllAsync();
+               .GetAllAsync(true))
+               .FirstOrDefault(t => t.Token == refreshToken);
 
-            var token = tokens.FirstOrDefault(t => t.Token == refreshToken);
 
 
             if (token == null)

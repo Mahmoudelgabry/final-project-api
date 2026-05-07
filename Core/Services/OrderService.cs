@@ -7,21 +7,9 @@ using Shareds.Exceptions;
 
 namespace Services
 {
-    public class OrderService : IOrderService
+    public class OrderService(IUnitOfWork _unitOfWork,IMapper _mapper) : IOrderService
     {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
-        private readonly ICartService _cartService;
 
-        public OrderService(
-            IUnitOfWork unitOfWork,
-            IMapper mapper,
-            ICartService cartService)
-        {
-            _unitOfWork = unitOfWork;
-            _mapper = mapper;
-            _cartService = cartService;
-        }
 
         public async Task<OrderResultDto> PlaceOrderAsync(
             int userId,

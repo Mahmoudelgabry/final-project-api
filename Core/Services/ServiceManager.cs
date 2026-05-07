@@ -50,7 +50,7 @@ namespace Services
 
             // 🔥 Order بياخد CartService
             _orderService = new Lazy<IOrderService>(() =>
-                new OrderService(unitOfWork, mapper, _cartService.Value)
+                new OrderService(unitOfWork, mapper)
             );
 
             // 🔥 Admin Order

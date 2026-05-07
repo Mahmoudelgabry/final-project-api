@@ -16,6 +16,7 @@ namespace Presentation
     [Route("api/[controller]")]
     public class PostsController(IServiceManager serviceManager) : ControllerBase
     {
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {

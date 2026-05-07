@@ -21,11 +21,11 @@ namespace Presentation
         [HttpPost]
         public async Task<IActionResult> Create(CreateGhostCraftDto dto)
         {
-            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
 
-            await serviceManager.GhostCraftService.CreateAsync(userId, dto);
+            var result = await serviceManager.GhostCraftService.CreateAsync(userId, dto);
 
-            return Ok();
+            return Ok(result);
         }
 
 
@@ -37,14 +37,15 @@ namespace Presentation
             return Ok(result);
         }
 
-        // Admin: Update Status (Approved / Rejected)
-        [Authorize(Roles = "Admin")]
-        [HttpPut("{id}/status")]
-        public async Task<IActionResult> UpdateStatus(int id, UpdateGhostCraftStatusDto dto)
-        {
-            await serviceManager.GhostCraftService.UpdateStatusAsync(id, dto.Status);
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(int id,UpdateGhostCraftDto dto)
+          {
+  
+            var result = await serviceManager
+                .GhostCraftService
+                .UpdateAsync(id, dto);
 
-            return Ok();
-        }
+            return Ok(result);
+          }
     }
 }

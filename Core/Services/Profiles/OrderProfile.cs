@@ -9,11 +9,17 @@ namespace Shared.Mapping
         public OrderProfile()
         {
             // 🔹 OrderItem → DTO
-            CreateMap<OrderItem, OrderItemDto>()
-                .ForMember(dest => dest.ProductName,
-                    opt => opt.MapFrom(src => src.Product.Name))
+            
+                CreateMap<OrderItem, OrderItemDto>()
+                  .ForMember(dest => dest.Name,
+                     opt => opt.MapFrom(src =>
+                       src.Product != null
+                         ? src.Product.Name
+                         : src.GhostCraftOrder.DishDescription))
                 .ForMember(dest => dest.Price,
-                    opt => opt.MapFrom(src => src.PriceAtPurchase));
+                    opt => opt.MapFrom(src => src.PriceAtPurchase))
+                .ForMember(dest => dest.Quantity,
+                     opt => opt.MapFrom(src => src.Quantity));
 
             // 🔹 Order → Result DTO
             CreateMap<Order, OrderResultDto>()

@@ -3,6 +3,7 @@ using Domain.Contracts;
 using Domain.Models;
 using Services.Abstractions;
 using Shared.DTOs.Cart;
+using Shareds.Exceptions;
 
 namespace Services
 {
@@ -31,22 +32,66 @@ namespace Services
         // 🟢 Add to Cart
         public async Task AddToCartAsync(int userId, AddToCartDto dto)
         {
+            if (dto.ProductId == null && dto.GhostCraftOrderId == null)
+                throw new BadRequestException("Item is required");
+
+            if (dto.ProductId != null && dto.GhostCraftOrderId != null)
+                throw new BadRequestException("Only one item type allowed");
+            if (dto.Quantity <= 0)
+                throw new BadRequestException("Invalid quantity");
             var cart = await GetOrCreateCart(userId);
 
-            var existingItem = cart.Items
-                .FirstOrDefault(i => i.ProductId == dto.ProductId);
+            CartItem? existingItem = null;
 
-            if (existingItem != null)
+            // Product
+            if (dto.ProductId != null)
             {
-                existingItem.Quantity += dto.Quantity;
-            }
-            else
-            {
-                cart.Items.Add(new CartItem
+                existingItem = cart.Items
+                    .FirstOrDefault(i => i.ProductId == dto.ProductId);
+
+                if (existingItem != null)
                 {
-                    ProductId = dto.ProductId,
-                    Quantity = dto.Quantity
-                });
+                    existingItem.Quantity += dto.Quantity;
+                }
+                else
+                {
+                    cart.Items.Add(new CartItem
+                    {
+                        ProductId = dto.ProductId.Value,
+                        Quantity = dto.Quantity
+                    });
+                }
+            }
+
+            // GhostCraft
+            if (dto.GhostCraftOrderId != null)
+            {
+                var ghostCraftRepo =
+                    _unitOfWork.GetRepository<GhostCraftOrder, int>();
+
+                var ghostCraft =
+                    await ghostCraftRepo.GetAsync(dto.GhostCraftOrderId.Value);
+
+                if (ghostCraft == null)
+                    throw new NotFoundException("GhostCraft not found");
+
+
+                existingItem = cart.Items
+                    .FirstOrDefault(i =>
+                        i.GhostCraftOrderId == dto.GhostCraftOrderId);
+
+                if (existingItem != null)
+                {
+                    existingItem.Quantity += dto.Quantity;
+                }
+                else
+                {
+                    cart.Items.Add(new CartItem
+                    {
+                        GhostCraftOrderId = dto.GhostCraftOrderId.Value,
+                        Quantity = dto.Quantity
+                    });
+                }
             }
 
             await _unitOfWork.SaveChangesAsync();
@@ -77,7 +122,7 @@ namespace Services
             var item = cart.Items.FirstOrDefault(i => i.Id == itemId);
 
             if (item == null)
-                throw new Exception("Item not found");
+                throw new NotFoundException("Item not found");
 
             if (dto.Quantity <= 0)
             {
@@ -99,7 +144,7 @@ namespace Services
             var item = cart.Items.FirstOrDefault(i => i.Id == itemId);
 
             if (item == null)
-                throw new Exception("Item not found");
+                throw new NotFoundException("Item not found");
 
             cart.Items.Remove(item);
 
@@ -111,7 +156,11 @@ namespace Services
         {
             var cart = await GetOrCreateCart(userId);
 
-            var subtotal = cart.Items.Sum(i => i.Product.Price * i.Quantity);
+            var subtotal = cart.Items.Sum(i =>
+              (i.Product != null
+                 ? i.Product.Price
+                 : i.GhostCraftOrder.Price)
+              * i.Quantity);
 
             var tax = subtotal * 0.08m;
             var shipping = subtotal > 50 ? 0 : 5.99m;

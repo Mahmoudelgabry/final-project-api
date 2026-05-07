@@ -22,8 +22,8 @@ namespace Persistence.Data.Configurations
             builder.Property(g => g.PortionSize)
                    .HasMaxLength(100);
 
-            builder.Property(g => g.Status)
-                   .HasMaxLength(50);
+            builder.Property(p => p.Price)
+                .HasColumnType("decimal(18,2)");
 
             builder.HasOne(g => g.User)
                    .WithMany()

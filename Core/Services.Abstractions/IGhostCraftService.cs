@@ -9,8 +9,9 @@ namespace Services.Abstractions
 {
     public interface IGhostCraftService
     {
-        Task CreateAsync(int userId, CreateGhostCraftDto dto);
+        Task<GhostCraftResultDto> CreateAsync(int userId, CreateGhostCraftDto dto);
         Task<IEnumerable<GhostCraftResultDto>> GetAllAsync();
-        Task UpdateStatusAsync(int orderId, string status);
+        
+        Task<GhostCraftResultDto> UpdateAsync(int id,UpdateGhostCraftDto dto);
     }
 }

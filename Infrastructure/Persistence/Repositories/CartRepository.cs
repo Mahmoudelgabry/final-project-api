@@ -18,6 +18,8 @@ namespace Persistence.Repositories
             return await _context.Carts
                 .Include(c => c.Items)
                 .ThenInclude(i => i.Product)
+                .Include(c => c.Items)
+                .ThenInclude(i => i.GhostCraftOrder)
                 .FirstOrDefaultAsync(c => c.UserId == userId);
         }
     }

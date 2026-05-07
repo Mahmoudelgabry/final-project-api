@@ -13,25 +13,44 @@ namespace Services.Profiles
                 .ForMember(d => d.CartItemId,
                     opt => opt.MapFrom(s => s.Id))
 
-                .ForMember(d => d.Name,
-                    opt => opt.MapFrom(s => s.Product.Name))
+                .ForMember(dest => dest.Name,
+                    opt => opt.MapFrom(src =>
+                       src.Product != null
+                          ? src.Product.Name
+                          : src.GhostCraftOrder.DishDescription))
 
-                .ForMember(d => d.ImageUrl,
-                    opt => opt.MapFrom(s => s.Product.ImageUrl))
+               .ForMember(dest => dest.ImageUrl,
+                    opt => opt.MapFrom(src =>
+                       src.Product != null
+                          ? src.Product.ImageUrl
+                          : null))
 
-                .ForMember(d => d.Price,
-                    opt => opt.MapFrom(s => s.Product.Price))
+               .ForMember(dest => dest.Price,
+                    opt => opt.MapFrom(src =>
+                       src.Product != null
+                          ? src.Product.Price
+                          : src.GhostCraftOrder.Price))
 
-                .ForMember(d => d.Total,
-                    opt => opt.MapFrom(s => s.Product.Price * s.Quantity));
+               .ForMember(dest => dest.Total,
+                    opt => opt.MapFrom(src =>
+                       (src.Product != null
+                           ? src.Product.Price
+                           : src.GhostCraftOrder.Price)
+                       * src.Quantity));
 
 
             // 🔥 Cart → CartDto
             CreateMap<Cart, CartDto>()
-                .ForMember(d => d.Subtotal,
-                    opt => opt.MapFrom(s =>
-                        s.Items.Sum(i => i.Product.Price * i.Quantity)
-                    ));
+               .ForMember(dest => dest.Items,
+                    opt => opt.MapFrom(src => src.Items))
+
+               .ForMember(dest => dest.Subtotal,
+                   opt => opt.MapFrom(src =>
+                      src.Items.Sum(i =>
+                        (i.Product != null
+                           ? i.Product.Price
+                           : i.GhostCraftOrder.Price)
+                      * i.Quantity)));
         }
     }
 }

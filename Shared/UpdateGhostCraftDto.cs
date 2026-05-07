@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace Shared
 {
-    public class UpdateGhostCraftStatusDto
+    public class UpdateGhostCraftDto : CreateGhostCraftDto
     {
-        public string Status { get; set; } // Approved / Rejected
     }
 }

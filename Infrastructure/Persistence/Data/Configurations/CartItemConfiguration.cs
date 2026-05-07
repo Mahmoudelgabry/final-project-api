@@ -1,7 +1,6 @@
 ﻿using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
 namespace Persistence.Configurations
 {
     public class CartItemConfiguration : IEntityTypeConfiguration<CartItem>
@@ -10,9 +9,16 @@ namespace Persistence.Configurations
         {
             builder.HasKey(ci => ci.Id);
 
+            // Product Relation
             builder.HasOne(ci => ci.Product)
                    .WithMany()
                    .HasForeignKey(ci => ci.ProductId)
+                   .OnDelete(DeleteBehavior.Restrict);
+
+            // GhostCraft Relation
+            builder.HasOne(ci => ci.GhostCraftOrder)
+                   .WithMany()
+                   .HasForeignKey(ci => ci.GhostCraftOrderId)
                    .OnDelete(DeleteBehavior.Restrict);
         }
     }

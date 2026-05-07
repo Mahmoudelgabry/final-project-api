@@ -21,6 +21,7 @@ namespace Domain.Models
         public string PortionSize { get; set; }
         public string SpecialInstructions { get; set; }
 
-        public string Status { get; set; }
+        public decimal Price { get; set; }
+        
     }
 }

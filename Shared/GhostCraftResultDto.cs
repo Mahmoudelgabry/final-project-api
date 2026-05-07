@@ -17,7 +17,7 @@ namespace Shared
 
         public int SpicinessLevel { get; set; }
         public int SaltinessLevel { get; set; }
-
+        public decimal Price { get; set; }
         public string PortionSize { get; set; }
         public string SpecialInstructions { get; set; }
 

@@ -33,12 +33,7 @@ namespace API.Controllers
 
             var result = await _serviceManager.OrderService.PlaceOrderAsync(userId, dto);
 
-            return Ok(new
-            {
-                orderId = result.Id,
-                total = result.TotalPrice,
-                status = result.Status
-            });
+            return Ok(result);
         }
 
         // ============================

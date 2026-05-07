@@ -16,7 +16,7 @@ namespace Services
     {
 
 
-        public async Task CreateAsync(int userId, CreateGhostCraftDto dto)
+        public async Task<GhostCraftResultDto> CreateAsync(int userId, CreateGhostCraftDto dto)
         {
             var order = mapper.Map<GhostCraftOrder>(dto);
 
@@ -25,6 +25,8 @@ namespace Services
             await unitOfWork.GetRepository<GhostCraftOrder, int>().AddAsync(order);
 
             await unitOfWork.SaveChangesAsync();
+
+            return mapper.Map<GhostCraftResultDto>(order);
         }
 
         public async Task<IEnumerable<GhostCraftResultDto>> GetAllAsync()
@@ -35,23 +37,24 @@ namespace Services
 
             return mapper.Map<IEnumerable<GhostCraftResultDto>>(orders);
         }
-        public async Task UpdateStatusAsync(int orderId, string status)
+       
+        public async Task<GhostCraftResultDto> UpdateAsync(int id ,UpdateGhostCraftDto dto)
         {
             var repo = unitOfWork.GetRepository<GhostCraftOrder, int>();
 
-            var order = await repo.GetAsync(orderId);
+            var order = await repo.GetAsync(id);
 
             if (order == null)
-                throw new NotFoundException("Order not found");
+                throw new NotFoundException("GhostCraft order not found");
 
-            if (status != "Approved" && status != "Rejected")
-                throw new BadRequestException("Invalid status");
-
-            order.Status = status;
+            mapper.Map(dto, order);
 
             repo.Update(order);
 
             await unitOfWork.SaveChangesAsync();
+
+            return mapper.Map<GhostCraftResultDto>(order);
         }
+
     }
 }

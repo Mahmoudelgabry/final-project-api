@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Domain.Contracts;
 using Domain.Models;
-using Microsoft.AspNetCore.Cors.Infrastructure;
 using Services.Abstractions;
 using Shared.DTOs.Order;
 using Shareds.Exceptions;
@@ -14,22 +13,25 @@ namespace Services
         private readonly IMapper _mapper;
         private readonly ICartService _cartService;
 
-    public OrderService(
-        IUnitOfWork unitOfWork,
-        IMapper mapper,
-        ICartService cartService)
+        public OrderService(
+            IUnitOfWork unitOfWork,
+            IMapper mapper,
+            ICartService cartService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _cartService = cartService;
         }
 
-        public async Task<OrderResultDto> PlaceOrderAsync(int userId, CreateOrderDto dto)
+        public async Task<OrderResultDto> PlaceOrderAsync(
+            int userId,
+            CreateOrderDto dto)
         {
-            // 💣 Idempotency
+            // 🔥 Idempotency
             if (!string.IsNullOrEmpty(dto.RequestId))
             {
-                var existingOrder = await _unitOfWork.OrderRepository
+                var existingOrder = await _unitOfWork
+                    .OrderRepository
                     .GetByRequestIdAsync(dto.RequestId, userId);
 
                 if (existingOrder != null)
@@ -45,22 +47,40 @@ namespace Services
             // ============================
             if (dto.Source.ToLower() == "cart")
             {
-                var cart = await _unitOfWork.CartRepository.GetCartWithItemsAsync(userId);
+                var cart = await _unitOfWork
+                    .CartRepository
+                    .GetCartWithItemsAsync(userId);
 
                 if (cart == null || !cart.Items.Any())
                     throw new Exception("Cart is empty");
 
                 foreach (var item in cart.Items)
                 {
-                    if (!item.Product.InStock)
-                        throw new Exception($"Product '{item.Product.Name}' is out of stock");
-
-                    items.Add(new OrderItem
+                    // Product
+                    if (item.Product != null)
                     {
-                        ProductId = item.ProductId,
-                        Quantity = item.Quantity,
-                        PriceAtPurchase = item.Product.Price
-                    });
+                        if (!item.Product.InStock)
+                            throw new Exception(
+                                $"Product '{item.Product.Name}' is out of stock");
+
+                        items.Add(new OrderItem
+                        {
+                            ProductId = item.ProductId,
+                            Quantity = item.Quantity,
+                            PriceAtPurchase = item.Product.Price
+                        });
+                    }
+
+                    // GhostCraft
+                    else if (item.GhostCraftOrder != null)
+                    {
+                        items.Add(new OrderItem
+                        {
+                            GhostCraftOrderId = item.GhostCraftOrderId,
+                            Quantity = item.Quantity,
+                            PriceAtPurchase = item.GhostCraftOrder.Price
+                        });
+                    }
                 }
             }
             else if (dto.Source.ToLower() == "buynow")
@@ -76,7 +96,8 @@ namespace Services
                     throw new NotFoundException("Product not found");
 
                 if (!product.InStock)
-                    throw new Exception($"Product '{product.Name}' is out of stock");
+                    throw new Exception(
+                        $"Product '{product.Name}' is out of stock");
 
                 items.Add(new OrderItem
                 {
@@ -93,9 +114,15 @@ namespace Services
             // ============================
             // 🔥 الحساب
             // ============================
-            decimal subtotal = items.Sum(i => i.PriceAtPurchase * i.Quantity);
+            decimal subtotal = items.Sum(i =>
+                i.PriceAtPurchase * i.Quantity);
+
             decimal tax = subtotal * 0.08m;
-            decimal shipping = subtotal > 50 ? 0 : 5.99m;
+
+            decimal shipping = subtotal > 50
+                ? 0
+                : 5.99m;
+
             decimal total = subtotal + tax + shipping;
 
             // ============================
@@ -105,35 +132,52 @@ namespace Services
             {
                 UserId = userId,
                 Address = dto.Address,
+
                 TotalPrice = Math.Round(total, 2),
+
                 Tax = Math.Round(tax, 2),
+
                 ShippingCost = shipping,
+
                 OrderStatus = OrderStatus.Pending,
+
                 PaymentStatus = PaymentStatus.Pending,
-                PaymentMethod = (PaymentMethod)dto.PaymentMethodId,
+
+                PaymentMethod =
+                    (PaymentMethod)dto.PaymentMethodId,
+
                 RequestId = dto.RequestId,
+
                 CreatedAt = DateTime.UtcNow,
+
                 OrderItems = items
             };
 
-            await _unitOfWork.OrderRepository.AddAsync(order);
+            await _unitOfWork
+                .OrderRepository
+                .AddAsync(order);
+
             await _unitOfWork.SaveChangesAsync();
 
             // 🟢 Cash Handling
             if (dto.PaymentMethodId == 2)
             {
                 order.OrderStatus = OrderStatus.Confirmed;
+
                 await _unitOfWork.SaveChangesAsync();
             }
 
-            // 🟢 مسح الكارت
+            // 🟢 Clear Cart
             if (dto.Source.ToLower() == "cart")
             {
-                var cart = await _unitOfWork.CartRepository.GetCartWithItemsAsync(userId);
+                var cart = await _unitOfWork
+                    .CartRepository
+                    .GetCartWithItemsAsync(userId);
 
                 if (cart != null)
                 {
                     cart.Items.Clear();
+
                     await _unitOfWork.SaveChangesAsync();
                 }
             }
@@ -141,10 +185,12 @@ namespace Services
             return _mapper.Map<OrderResultDto>(order);
         }
 
-        // 🚫 Cancel Rule
+        // 🚫 Cancel Order
         public async Task CancelOrderAsync(int orderId)
         {
-            var order = await _unitOfWork.GetRepository<Order, int>().GetAsync(orderId);
+            var order = await _unitOfWork
+                .GetRepository<Order, int>()
+                .GetAsync(orderId);
 
             if (order == null)
                 throw new NotFoundException("Order not found");
@@ -157,15 +203,24 @@ namespace Services
             await _unitOfWork.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<OrderResultDto>> GetUserOrdersAsync(int userId)
+        // 🟣 User Orders
+        public async Task<IEnumerable<OrderResultDto>>
+            GetUserOrdersAsync(int userId)
         {
-            var orders = await _unitOfWork.OrderRepository.GetOrdersByUserIdAsync(userId);
+            var orders = await _unitOfWork
+                .OrderRepository
+                .GetOrdersByUserIdAsync(userId);
+
             return _mapper.Map<IEnumerable<OrderResultDto>>(orders);
         }
 
-        public async Task<OrderDto> GetOrderDetailsAsync(int orderId)
+        // 🔵 Order Details
+        public async Task<OrderDto>
+            GetOrderDetailsAsync(int orderId)
         {
-            var order = await _unitOfWork.OrderRepository.GetOrderWithItemsAsync(orderId);
+            var order = await _unitOfWork
+                .OrderRepository
+                .GetOrderWithItemsAsync(orderId);
 
             if (order == null)
                 throw new NotFoundException("Order not found");
@@ -173,5 +228,4 @@ namespace Services
             return _mapper.Map<OrderDto>(order);
         }
     }
-
 }

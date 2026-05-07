@@ -20,14 +20,39 @@ namespace Services.Profiles
                 .ForMember(dest => dest.DietaryPreferences,
                     opt => opt.MapFrom(src => string.Join(",", src.DietaryPreferences)))
 
-                .ForMember(dest => dest.Status,
-                    opt => opt.MapFrom(_ => "Pending"));
+                
+
+                .ForMember(dest => dest.Price,
+                    opt => opt.MapFrom(src => GetPrice(src.PortionSize)));
+            CreateMap<UpdateGhostCraftDto, GhostCraftOrder>()
+               .ForMember(dest => dest.Allergies,
+                   opt => opt.MapFrom(src => string.Join(",", src.Allergies)))
+
+              .ForMember(dest => dest.DietaryPreferences,
+                  opt => opt.MapFrom(src => string.Join(",", src.DietaryPreferences)))
+
+              .ForMember(dest => dest.Price,
+                    opt => opt.MapFrom(src => GetPrice(src.PortionSize)));
             CreateMap<GhostCraftOrder, GhostCraftResultDto>()
                 .ForMember(dest => dest.Allergies,
-                    opt => opt.MapFrom(src => src.Allergies.Split(',', StringSplitOptions.RemoveEmptyEntries)))
+                    opt => opt.MapFrom(src =>
+                        src.Allergies.Split(',', StringSplitOptions.RemoveEmptyEntries)))
 
-               .ForMember(dest => dest.DietaryPreferences,
-                    opt => opt.MapFrom(src => src.DietaryPreferences.Split(',', StringSplitOptions.RemoveEmptyEntries)));
+                .ForMember(dest => dest.DietaryPreferences,
+                    opt => opt.MapFrom(src =>
+                        src.DietaryPreferences.Split(',', StringSplitOptions.RemoveEmptyEntries)));
+        }
+
+        private static decimal GetPrice(string portionSize)
+        {
+            return portionSize switch
+            {
+                "Small" => 12.99m,
+                "Medium" => 18.99m,
+                "Large" => 24.99m,
+                "Family" => 32.99m,
+                _ => throw new Exception("Invalid portion size")
+            };
         }
     }
 }

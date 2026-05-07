@@ -36,7 +36,7 @@ namespace Services
             return product;
         }
 
-        // 🔥🔥🔥 التعديل هنا
+        
         public async Task<Product> CreateAsync(CreateProductDto dto)
         {
             var repo = _unitOfWork.GetRepository<Product, int>();
@@ -48,7 +48,7 @@ namespace Services
             await repo.AddAsync(product);
             await _unitOfWork.SaveChangesAsync();
 
-            return product; // 🔥 مهم جدًا
+            return product; 
         }
 
         public async Task UpdateAsync(int id, UpdateProductDto dto)

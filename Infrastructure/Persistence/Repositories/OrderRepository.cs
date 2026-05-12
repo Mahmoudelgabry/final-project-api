@@ -17,8 +17,13 @@ namespace Persistence.Repositories
         {
             return await _context.Orders
                 .Include(o => o.User)
-                .Include(o => o.OrderItems) // 🔥 FIX
+
+                .Include(o => o.OrderItems)
                     .ThenInclude(i => i.Product)
+
+                .Include(o => o.OrderItems)
+                    .ThenInclude(i => i.GhostCraftOrder)
+
                 .ToListAsync();
         }
 
@@ -26,8 +31,13 @@ namespace Persistence.Repositories
         {
             return await _context.Orders
                 .Include(o => o.User)
-                .Include(o => o.OrderItems) // 🔥 FIX
+
+                .Include(o => o.OrderItems)
                     .ThenInclude(i => i.Product)
+
+                .Include(o => o.OrderItems)
+                    .ThenInclude(i => i.GhostCraftOrder)
+
                 .FirstOrDefaultAsync(o => o.Id == orderId);
         }
 
@@ -35,8 +45,13 @@ namespace Persistence.Repositories
         {
             return await _context.Orders
                 .Where(o => o.UserId == userId)
-                .Include(o => o.OrderItems) // 🔥 FIX
+
+                .Include(o => o.OrderItems)
                     .ThenInclude(i => i.Product)
+
+                .Include(o => o.OrderItems)
+                    .ThenInclude(i => i.GhostCraftOrder)
+
                 .ToListAsync();
         }
 

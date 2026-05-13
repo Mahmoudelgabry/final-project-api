@@ -20,8 +20,8 @@ namespace Domain.Models
 
         public bool IsActive { get; set; } = true;
 
-       
 
+        public ICollection<ChatSession> ChatSessions { get; set; }
         public ICollection<Order> Orders { get; set; }
         public ICollection<CommunityPost> Posts { get; set; }
         public ICollection<Comment> Comments { get; set; }

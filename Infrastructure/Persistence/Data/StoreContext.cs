@@ -35,6 +35,9 @@ public class StoreContext : DbContext
     // 🔥 Payment System
     public DbSet<Payment> Payments { get; set; }
     public DbSet<SavedPaymentMethod> SavedPaymentMethods { get; set; }
+    public DbSet<ChatSession> ChatSessions { get; set; }
+
+    public DbSet<ChatMessage> ChatMessages { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
